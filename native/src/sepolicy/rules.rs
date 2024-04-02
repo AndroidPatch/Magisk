@@ -57,8 +57,6 @@ impl SepolicyMagisk for sepolicy {
             typeattribute([proc], ["mlstrustedsubject", "netdomain", "appdomain"]);
             type_(file, ["file_type"]);
             typeattribute([file], ["mlstrustedobject"]);
-            type_(log, ["file_type"]);
-            typeattribute([log], ["mlstrustedobject"]);
 
             // Create unconstrained file type
             allow(["domain"], [file],
@@ -81,7 +79,7 @@ impl SepolicyMagisk for sepolicy {
 
             // Allow us to do any ioctl
             allowxperm([proc], ["fs_type", "dev_type", "file_type", "domain"],
-                ["blk_file", "fifo_file", "chr_file"], xall);
+                ["blk_file", "fifo_file", "chr_file", "file"], xall);
             allowxperm([proc], [proc], ["tcp_socket", "udp_socket", "rawip_socket"], xall);
 
             // Let binder work with our processes
@@ -95,16 +93,13 @@ impl SepolicyMagisk for sepolicy {
             allow(["domain"], [proc], ["fd"], ["use"]);
             allow(["domain"], [proc], ["fifo_file"], ["write", "read", "open", "getattr"]);
 
-            // Allow these processes to access MagiskSU and output logs
+            // Allow these processes to access SU and output logs
             allow(["zygote", "shell", "platform_app",
                 "system_app", "priv_app", "untrusted_app", "untrusted_app_all"],
                 [proc], ["unix_stream_socket"], ["connectto", "getopt"]);
 
             // Let everyone access tmpfs files (for SAR sbin overlay)
             allow(["domain"], ["tmpfs"], ["file"], all);
-
-            // Allow magiskinit daemon to handle mock selinuxfs
-            allow(["kernel"], ["tmpfs"], ["fifo_file"], ["write"]);
 
             // For relabelling files
             allow(["rootfs"], ["labeledfs", "tmpfs"], ["filesystem"], ["associate"]);
@@ -114,16 +109,8 @@ impl SepolicyMagisk for sepolicy {
             allow(["kernel"], ["kernel"], ["process"], ["setcurrent"]);
             allow(["kernel"], [proc], ["process"], ["dyntransition"]);
 
-            // Let init run stuffs
-            allow(["init"], [proc], ["process"], all);
-
             // For mounting loop devices, mirrors, tmpfs
             allow(["kernel"], ["fs_type", "dev_type", "file_type"], ["file"], ["read", "write"]);
-
-            // Zygisk rules
-            allow(["zygote"], ["zygote"], ["process"], ["execmem"]);
-            allow(["zygote"], ["fs_type"], ["filesystem"], ["unmount"]);
-            allow(["system_server"], ["system_server"], ["process"], ["execmem"]);
 
             // Shut llkd up
             dontaudit(["llkd"], [proc], ["process"], ["ptrace"]);
