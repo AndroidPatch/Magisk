@@ -1,12 +1,12 @@
 APP_BUILD_SCRIPT := src/Android.mk
-APP_ABI          := armeabi-v7a arm64-v8a x86 x86_64
-APP_CFLAGS       := -Wall -Oz -fomit-frame-pointer -flto
-APP_LDFLAGS      := -flto
-APP_CPPFLAGS     := -std=c++20
+APP_ABI          := arm64-v8a
+APP_CFLAGS       := -Wall -DNDEBUG -O3 -fomit-frame-pointer -flto
+APP_LDFLAGS      := -flto -Wl,-icf=safe,--lto-O3,-s,-x,--gc-sections,--no-undefined
+APP_CPPFLAGS     := -std=c++20 -O3 -flto -DNDEBUG
 APP_STL          := none
 APP_PLATFORM     := android-23
 APP_THIN_ARCHIVE := true
-APP_STRIP_MODE   := none
+APP_STRIP_MODE   := --strip-all
 
 ifdef B_CRT0
 
