@@ -1,8 +1,8 @@
 APP_BUILD_SCRIPT := src/Android.mk
 APP_ABI          := arm64-v8a
-APP_CFLAGS       := -Wall -DNDEBUG -O3 -fomit-frame-pointer -flto
+APP_CFLAGS       := -Wall -DNDEBUG -O3 -fomit-frame-pointer -flto -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -funwind-tables -fstack-protector-strong -fno-exceptions -fno-rtti -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-stack-protector -fno-semantic-interposition -U_FORTIFY_SOURCE
 APP_LDFLAGS      := -flto -Wl,-icf=all,--lto-O3,-s,-x,--gc-sections,--no-undefined
-APP_CPPFLAGS     := -std=c++23 -O3 -flto -DNDEBUG
+APP_CPPFLAGS     := -std=c++23 -O3 -flto -DNDEBUG -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -funwind-tables -fstack-protector-strong -fno-exceptions -fno-rtti -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-stack-protector -fno-semantic-interposition -U_FORTIFY_SOURCE
 APP_STL          := none
 APP_PLATFORM     := android-23
 APP_THIN_ARCHIVE := true
@@ -12,7 +12,7 @@ APP_SUPPORT_FLEXIBLE_PAGE_SIZES := true
 ifdef B_CRT0
 
 # Disable all security and debugging features
-APP_CFLAGS       +=	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-stack-protector -U_FORTIFY_SOURCE
+APP_CFLAGS       +=	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-stack-protector -fno-semantic-interposition -U_FORTIFY_SOURCE
 # Override output folder to make sure all dependencies are rebuilt with new CFLAGS
 NDK_APP_OUT      := ./obj/nolibc
 
@@ -25,3 +25,4 @@ ifeq ($(OS),Windows_NT)
 APP_SHORT_COMMANDS := true
 endif
 endif
+
