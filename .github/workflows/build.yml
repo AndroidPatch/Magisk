@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    name: Build Magisk artifacts
+    name: Build APatch required artifacts
     runs-on: ubuntu-latest
     env:
       SCCACHE_DIRECT: false
@@ -32,8 +32,11 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      - name: Build release
+      - name: Build magiskpolicy
         run: ./build.py -vr binary magiskpolicy
+
+      - name: Build resetprop
+        run: ./build.py -vr binary resetprop
 
       - name: Stop gradle daemon
         run: ./gradlew --stop
