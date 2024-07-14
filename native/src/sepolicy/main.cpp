@@ -7,7 +7,7 @@ using namespace std;
 
 [[noreturn]] static void usage(char *arg0) {
     fprintf(stderr,
-R"EOF(MagiskPolicy - SELinux Policy Patch Tool
+R"EOF(MagiskPolicy - SELinux Policy Patch Tool for APatch
 
 Usage: %s [--options...] [policy statements...]
 
