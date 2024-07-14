@@ -41,7 +41,7 @@ struct Cli {
 
 fn print_usage(cmd: &str) {
     eprintln!(
-        r#"MagiskPolicy - SELinux Policy Patch Tool
+        r#"MagiskPolicy - SELinux Policy Patch Tool For APatch
 
 Usage: {cmd} [--options...] [policy statements...]
 

@@ -53,23 +53,10 @@ impl SePolicy {
         set_log_level_state(LogLevel::Warn, false);
         rules! {
             use self;
-            // Prevent anything to change sepolicy except ourselves
-            deny(all, ["kernel"], ["security"], ["load_policy"]);
             type_(proc, ["domain"]);
             typeattribute([proc], ["mlstrustedsubject", "netdomain", "appdomain"]);
             type_(file, ["file_type"]);
             typeattribute([file], ["mlstrustedobject"]);
-            type_(log, ["file_type"]);
-            typeattribute([log], ["mlstrustedobject"]);
-
-            // Create unconstrained file type
-            allow(["domain"], [file],
-                ["file", "dir", "fifo_file", "chr_file", "lnk_file", "sock_file"], all);
-
-            // Only allow zygote to open log pipe
-            allow(["zygote"], [log], ["fifo_file"], ["open", "read"]);
-            // Allow all processes to output logs
-            allow(["domain"], [log], ["fifo_file"], ["write"]);
 
             // Make our root domain unconstrained
             allow([proc], [
@@ -83,7 +70,7 @@ impl SePolicy {
 
             // Allow us to do any ioctl
             allowxperm([proc], ["fs_type", "dev_type", "file_type", "domain"],
-                ["blk_file", "fifo_file", "chr_file"], xall);
+                ["blk_file", "fifo_file", "chr_file", "file"], xall);
             allowxperm([proc], [proc], ["tcp_socket", "udp_socket", "rawip_socket"], xall);
 
             // Let binder work with our processes
@@ -97,48 +84,11 @@ impl SePolicy {
             allow(["domain"], [proc], ["fd"], ["use"]);
             allow(["domain"], [proc], ["fifo_file"], ["write", "read", "open", "getattr"]);
 
-            // Allow these processes to access MagiskSU and output logs
-            allow(["zygote", "shell", "platform_app",
-                "system_app", "priv_app", "untrusted_app", "untrusted_app_all"],
-                [proc], ["unix_stream_socket"], ["connectto", "getopt"]);
-
-            // Let selected domains access tmpfs files
-            // For tmpfs overlay on 2SI, Zygisk on lower Android versions and AVD scripts
-            allow(["init", "zygote", "shell"], ["tmpfs"], ["file"], all);
-
-            // Allow magiskinit daemon to log to kmsg
-            allow(["kernel"], ["rootfs", "tmpfs"], ["chr_file"], ["write"]);
-
-            // Allow magiskinit daemon to handle mock selinuxfs
-            allow(["kernel"], ["tmpfs"], ["fifo_file"], ["open", "read", "write"]);
-
-            // For relabelling files
-            allow(["rootfs"], ["labeledfs", "tmpfs"], ["filesystem"], ["associate"]);
-            allow([file], ["pipefs", "devpts"], ["filesystem"], ["associate"]);
-            allow(["kernel"], all, ["file"], ["relabelto"]);
-            allow(["kernel"], ["tmpfs"], ["file"], ["relabelfrom"]);
-
-            // Let init transit to SEPOL_PROC_DOMAIN
-            allow(["kernel"], ["kernel"], ["process"], ["setcurrent"]);
-            allow(["kernel"], [proc], ["process"], ["dyntransition"]);
-
-            // Let init run stuffs
-            allow(["init"], [proc], ["process"], all);
+            // Keep adb_data_file for kernel
+            allow(["kernel"], ["adb_data_file"], ["file"], all);
 
             // For mounting loop devices, mirrors, tmpfs
             allow(["kernel"], ["fs_type", "dev_type", "file_type"], ["file"], ["read", "write"]);
-
-            // Zygisk rules
-            allow(["zygote"], ["zygote"], ["process"], ["execmem"]);
-            allow(["zygote"], ["fs_type"], ["filesystem"], ["unmount"]);
-            allow(["system_server"], ["system_server"], ["process"], ["execmem"]);
-
-            // Shut llkd up
-            dontaudit(["llkd"], [proc], ["process"], ["ptrace"]);
-
-            // Keep /data/adb/* context
-            deny(["init"], ["adb_data_file"], ["dir"], ["search"]);
-            deny(["vendor_init"], ["adb_data_file"], ["dir"], ["search"]);
         }
 
         #[cfg(any())]
