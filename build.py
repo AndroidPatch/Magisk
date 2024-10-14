@@ -69,11 +69,7 @@ os_name = platform.system().lower()
 
 # Common constants
 support_abis = {
-    "armeabi-v7a": "thumbv7neon-linux-androideabi",
-    "x86": "i686-linux-android",
     "arm64-v8a": "aarch64-linux-android",
-    "x86_64": "x86_64-linux-android",
-    "riscv64": "riscv64-linux-android",
 }
 default_targets = {"magisk", "magiskinit", "magiskboot", "magiskpolicy"}
 support_targets = default_targets | {"resetprop"}
@@ -680,7 +676,7 @@ def load_config():
         abiList = re.split("\\s*,\\s*", config["abiList"])
         archs = set(abiList) & support_abis.keys()
     else:
-        archs = {"armeabi-v7a", "x86", "arm64-v8a", "x86_64"}
+        archs = {"arm64-v8a"}
 
     triples = map(support_abis.get, archs)
 
