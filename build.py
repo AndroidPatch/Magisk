@@ -61,13 +61,9 @@ os_name = platform.system().lower()
 
 # Common constants
 support_abis = {
-    "armeabi-v7a": "thumbv7neon-linux-androideabi",
-    "x86": "i686-linux-android",
     "arm64-v8a": "aarch64-linux-android",
-    "x86_64": "x86_64-linux-android",
-    "riscv64": "riscv64-linux-android",
 }
-default_archs = {"armeabi-v7a", "x86", "arm64-v8a", "x86_64"}
+default_archs = {"arm64-v8a"}
 default_targets = {"magisk", "magiskinit", "magiskboot", "magiskpolicy"}
 support_targets = default_targets | {"resetprop"}
 rust_targets = {"magisk", "magiskinit", "magiskboot", "magiskpolicy"}
@@ -766,11 +762,7 @@ def load_config():
     config["outdir"] = Path(config["outdir"])
     config["outdir"].mkdir(mode=0o755, parents=True, exist_ok=True)
 
-    if "abiList" in config:
-        abiList = re.split("\\s*,\\s*", config["abiList"])
-        archs = set(abiList) & support_abis.keys()
-    else:
-        archs = default_archs
+    archs = {"arm64-v8a"}
 
     set_archs(archs)
 
