@@ -63,11 +63,7 @@ cpu_count = multiprocessing.cpu_count()
 
 # Common constants
 support_abis = {
-    "armeabi-v7a": "thumbv7neon-linux-androideabi",
-    "x86": "i686-linux-android",
     "arm64-v8a": "aarch64-linux-android",
-    "x86_64": "x86_64-linux-android",
-    "riscv64": "riscv64-linux-android",
 }
 abi_alias = {
     "arm": "armeabi-v7a",
@@ -75,7 +71,7 @@ abi_alias = {
     "arm64": "arm64-v8a",
     "x64": "x86_64",
 }
-default_abis = support_abis.keys() - {"riscv64"}
+default_archs = {"arm64-v8a"}
 support_targets = {"magisk", "magiskinit", "magiskboot", "magiskpolicy", "resetprop"}
 default_targets = support_targets - {"resetprop"}
 rust_targets = default_targets.copy()
@@ -791,10 +787,7 @@ def load_config():
     config["outdir"] = Path(config["outdir"])
     config["outdir"].mkdir(mode=0o755, parents=True, exist_ok=True)
 
-    if "abiList" in config:
-        abis = set(re.split("\\s*,\\s*", config["abiList"]))
-    else:
-        abis = default_abis
+    abis = {"arm64-v8a"}
 
     set_build_abis(abis)
 
