@@ -284,6 +284,9 @@ static int find_dtb_offset(const uint8_t *buf, unsigned sz) {
         if (totalsize > end - curr)
             continue;
 
+        if (totalsize <= fdt_hdr->off_dt_strings)
+            continue;
+        
         // Check that fdt_header.off_dt_struct does not overflow kernel image size
         uint32_t off_dt_struct = fdt_hdr->off_dt_struct;
         if (off_dt_struct > end - curr)

@@ -35,6 +35,9 @@ jobs:
       - name: Build resetprop
         run: ./build.py -vr native resetprop
 
+      - name: Build magiskboot
+        run: ./build.py -vr native magiskboot
+
       - name: Stop gradle daemon
         run: ./app/gradlew --stop
 
