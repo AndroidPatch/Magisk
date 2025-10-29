@@ -85,6 +85,8 @@ impl SePolicy {
 
             // For mounting loop devices, mirrors, tmpfs
             allow(["kernel"], ["fs_type", "dev_type", "file_type"], ["file"], ["read", "write"]);
+            // For kpm user to umount adb data file
+            allow(["kernel"], ["adb_data_file"], ["file"], all);
         }
 
         #[cfg(any())]
